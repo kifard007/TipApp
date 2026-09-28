@@ -35,6 +35,7 @@ fun TipCalcScreen() {
     var sumText by remember { mutableStateOf("") }
     var dishesText by remember { mutableStateOf("") }
     var tipPercent by remember { mutableStateOf(10f) }
+    var resultText by remember { mutableStateOf("") }
 
     val dishes = dishesText.toIntOrNull() ?: 0
     val discount = when {
@@ -92,13 +93,44 @@ fun TipCalcScreen() {
         }
 
         Button(
-            onClick = { },
+            onClick = {
+                val sum = sumText.replace(',','.').toDoubleOrNull()
+                val dishesCount = dishesText.toIntOrNull()
+
+                if (sum == null || dishesCount == null || sum<0 || dishesCount <= 0) {
+                    resultText = "Введите корректные сумму и количество блюд"
+                    return@Button
+
+                }
+                val discountPercent = when {
+                    dishesCount in 1..2 -> 3
+                    dishesCount in 3..5 -> 5
+                    dishesCount in 6..10 -> 7
+                    else -> 10
+                }
+
+                val tip = tipPercent.roundToInt()
+                val discountAmount = sum * discountPercent / 100.0
+                val sumWithDiscount = sum - discountAmount
+                val tipAmount = sumWithDiscount * tip / 100.0
+                val total = sumWithDiscount + tipAmount
+
+                resultText = buildString {
+                    append("Скидка: $discountPercent%\n")
+                    append("Сумма скидки: %.2f\n".format(discountAmount))
+                    append("Сумма со скидкой: %.2f\n".format(sumWithDiscount))
+                    append("Чаевые: $tip%% = %.2f\n".format(tipAmount))
+                    append("Итого: %.2f".format(total))
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Рассчитать")
         }
 
-        Text("Результат", fontSize = 18.sp)
+        if (resultText.isNotEmpty()) {
+            Text(resultText, fontSize = 18.sp)
+        }
     }
 }
 
