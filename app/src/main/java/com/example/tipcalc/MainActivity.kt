@@ -35,6 +35,16 @@ fun TipCalcScreen() {
     var sumText by remember { mutableStateOf("") }
     var dishesText by remember { mutableStateOf("") }
     var tipPercent by remember { mutableStateOf(10f) }
+
+    val dishes = dishesText.toIntOrNull() ?: 0
+    val discount = when {
+        dishes in 1..2 -> 3
+        dishes in 3..5 -> 5
+        dishes in 6..10 -> 7
+        dishes > 10 -> 10
+        else -> 0
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,14 +84,11 @@ fun TipCalcScreen() {
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RadioButton(selected = false, onClick = null, enabled = false)
-            Text("3%")
-            RadioButton(selected = false, onClick = null, enabled = false)
-            Text("5%")
-            RadioButton(selected = false, onClick = null, enabled = false)
-            Text("7%")
-            RadioButton(selected = false, onClick = null, enabled = false)
-            Text("10%")
+
+            DiscountRadio("3%", discount == 3)
+            DiscountRadio("5%", discount == 5)
+            DiscountRadio("7%", discount == 7)
+            DiscountRadio("10%", discount == 10)
         }
 
         Button(
@@ -92,6 +99,14 @@ fun TipCalcScreen() {
         }
 
         Text("Результат", fontSize = 18.sp)
+    }
+}
+
+@Composable
+fun DiscountRadio(label: String, selected: Boolean) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        RadioButton(selected = selected,onClick = null, enabled = false)
+        Text(label)
     }
 }
 
