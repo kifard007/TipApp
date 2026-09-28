@@ -8,11 +8,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +32,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipCalcScreen() {
+    var sumText by remember { mutableStateOf("") }
+    var dishesText by remember { mutableStateOf("") }
+    var tipPercent by remember { mutableStateOf(10f) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,8 +44,8 @@ fun TipCalcScreen() {
     ) {
         Text("Сумма заказа:")
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = sumText,
+            onValueChange = {sumText = it},
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Введите сумму") },
             singleLine = true
@@ -45,18 +53,18 @@ fun TipCalcScreen() {
 
         Text("Количество блюд:")
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = dishesText,
+            onValueChange = {dishesText = it},
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Введите количество") },
             singleLine = true
         )
 
         Text("Процент чаевых:")
-        Text("10%", fontSize = 18.sp)
+        Text("${tipPercent.roundToInt()}", fontSize = 18.sp)
         Slider(
-            value = 10f,
-            onValueChange = {},
+            value = tipPercent,
+            onValueChange = {tipPercent = it},
             valueRange = 0f..25f,
             steps = 24
         )
